@@ -21,11 +21,12 @@ public class HttpRequest {
     }
 
     public static HttpRequest from(final BufferedReader bufferedReader) throws IOException {
+        final String line = bufferedReader.readLine();
+        final HttpRequestLine requestLine = HttpRequestLine.from(line);
         final List<String> requestHeader = extractRequestHeader(bufferedReader);
-        final HttpRequestLine startLine = HttpRequestLine.from(requestHeader.get(0));
-        final HttpRequestHeaders headers = HttpRequestHeaders.from(requestHeader.subList(1, requestHeader.size()));
+        final HttpRequestHeaders headers = HttpRequestHeaders.from(requestHeader);
         final HttpRequestBody requestBody = extractRequestBody(bufferedReader, headers);
-        return new HttpRequest(startLine, headers, requestBody);
+        return new HttpRequest(requestLine, headers, requestBody);
     }
 
     private static List<String> extractRequestHeader(final BufferedReader bufferedReader) throws IOException {
