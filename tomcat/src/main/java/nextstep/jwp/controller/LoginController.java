@@ -19,7 +19,7 @@ public class LoginController extends AbstractController {
     private static final String PASSWORD = "password";
 
     @Override
-    protected void doPost(final HttpRequest request, final HttpResponse response) throws Exception {
+    protected void doPost(final HttpRequest request, final HttpResponse response) {
         final Map<String, String> loginData = request.getBody();
         final User user = InMemoryUserRepository.findByAccount(loginData.get("account"))
                 .orElse(null);
@@ -53,5 +53,12 @@ public class LoginController extends AbstractController {
         final HttpSession httpSession = new HttpSession(newCookie.getJSESSIONID());
         httpSession.setAttribute(USER, user);
         sessionManager.add(httpSession);
+    }
+
+    private HttpCookie makeHttpCookie(final HttpRequest httpRequest) {
+        if (httpRequest.hasCookie()) {
+            return HttpCookie.from(httpRequest.getCookie());
+        }
+        return HttpCookie.empty();
     }
 }
